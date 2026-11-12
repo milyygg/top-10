@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+git diff --cached --quiet || { echo 'Stage and commit changes before pushing.'; exit 1; }
+git diff --quiet || { echo 'Commit or stash tracked changes before pushing.'; exit 1; }
+node scripts/check-publication.mjs

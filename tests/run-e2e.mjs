@@ -1,0 +1,5 @@
+import fs from 'node:fs/promises';
+import {spawn} from 'node:child_process';
+await fs.mkdir('reference/qa',{recursive:true});
+const base='http://127.0.0.1:5176';const server=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5176','--strictPort'],{stdio:'pipe'});let output='';server.stdout.on('data',d=>output+=d);server.stderr.on('data',d=>output+=d);
+try{let ready=false;for(let i=0;i<80;i++){if(server.exitCode!==null)throw new Error(output);try{const r=await fetch(base);if(r.ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,100));}if(!ready)throw new Error('Vite не запустился: '+output);for(const script of ['smoke.mjs','touch-export.mjs','regression.mjs','production.mjs']){await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['tests/'+script],{stdio:'inherit',env:{...process.env,TEST_BASE_URL:base}});child.on('exit',code=>code===0?resolve():reject(new Error(script+' exit '+code)));child.on('error',reject);});}}finally{server.kill();}

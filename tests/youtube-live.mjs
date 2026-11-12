@@ -1,0 +1,5 @@
+import {chromium} from '@playwright/test';
+import fs from 'node:fs/promises';
+const browser=await chromium.launch({channel:'msedge',headless:true});const page=await browser.newPage();await page.goto(process.env.TEST_BASE_URL||'http://127.0.0.1:5175');const result=[];
+for(const id of ['M7lc1UVf-VE','aqz-KE-bpKQ','jNQXAC9IVRw']){result.push(await page.evaluate(async id=>{const signal=AbortSignal.timeout(12000);const out={id};for(const [key,url] of Object.entries({metadata:`https://www.youtube.com/oembed?url=${encodeURIComponent('https://www.youtube.com/watch?v='+id)}&format=json`,thumbnail:`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}))try{const r=await fetch(url,{signal});out[key]={status:r.status,...(key==='metadata'?{data:await r.json()}:{bytes:(await r.blob()).size})};}catch(e){out[key]={error:String(e)};}return out;},id));}
+console.log(JSON.stringify(result,null,2));await fs.mkdir('reference/qa',{recursive:true});await fs.writeFile('reference/qa/youtube-network.json',JSON.stringify(result,null,2));await browser.close();

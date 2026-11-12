@@ -1,0 +1,30 @@
+node_modules/
+dist/
+*.tsbuildinfo
+test-results/
+.env*
+# Local QA sources and generated artifacts are not part of the repository.
+reference/
+playwright-report/
+*.log
+*.tmp
+*.bak
+.DS_Store
+Thumbs.db
+
+# Private credentials, databases and local archives.
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite*
+*.db
+*.zip
+*.7z
+*.rar
+.dev.vars*
+.wrangler/
+.vscode/
+.idea/
+credentials*.json
+secrets*.json
